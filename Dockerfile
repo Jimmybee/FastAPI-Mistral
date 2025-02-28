@@ -7,15 +7,26 @@
 #
 # How to run:
 #   docker run -p 8000:8000 --env-file .env mistral-api
-#   
+#
 # For production:
 #   docker run -p 8000:8000 -e HF_TOKEN=your_token mistral-api
 #
 # SECURITY NOTE: Never include sensitive tokens directly in this Dockerfile,
 # always pass them as environment variables at runtime.
 
-# Use a lightweight Python image
-FROM python:3.10-slim
+# Use an appropriate base image
+FROM nvidia/cuda:12.1.1-base-ubuntu22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    git \
+    curl && \
+    apt-get clean
 
 # Set the working directory
 WORKDIR /app
