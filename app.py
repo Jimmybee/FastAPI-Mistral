@@ -8,23 +8,13 @@ app = FastAPI()
 
 MODEL_NAME = "mistralai/Mistral-7B-Instruct-v0.1"
 
-HF_TOKEN = os.getenv("HF_TOKEN")
-# Detect the best available device
-if torch.backends.mps.is_available():
-    device = "mps"  # Apple Silicon (Mac M1/M2)
-elif torch.cuda.is_available():
-    device = "cuda"  # NVIDIA GPU
-else:
-    device = "cpu"   # Fallback
-
-print(f"Loading model on {device}...")
+device = "cuda"  # NVIDIA GPU
 
 # Load the model and tokenizer
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
-    torch_dtype=torch.float16 if device in ["cuda", "mps"] else torch.float32,
-    device_map="auto"
+    torch_dtype=torch.float16
 ).to(device)
 
 # Define request schema
