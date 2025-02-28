@@ -25,7 +25,7 @@ model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
     torch_dtype=torch.float16 if device in ["cuda", "mps"] else torch.float32,
     device_map="auto"
-)
+).to(device)
 
 # Define request schema
 class PromptRequest(BaseModel):
@@ -36,7 +36,7 @@ class PromptRequest(BaseModel):
 async def generate_text(request: PromptRequest):
     try:
         inputs = tokenizer(request.prompt, return_tensors="pt")
-        # inputs = {k: v.to(device) for k, v in inputs.items()}  # Move input to model's device
+        inputs = {k: v.to(device) for k, v in inputs.items()}  # Move input to model's device
 
         outputs = model.generate(**inputs, max_length=request.max_length, pad_token_id=tokenizer.eos_token_id)
         response_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
