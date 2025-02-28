@@ -2,11 +2,13 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+import os
 
 app = FastAPI()
 
 MODEL_NAME = "mistralai/Mistral-7B-Instruct-v0.1"
 
+HF_TOKEN = os.getenv("HF_TOKEN")
 # Detect the best available device
 if torch.backends.mps.is_available():
     device = "mps"  # Apple Silicon (Mac M1/M2)
